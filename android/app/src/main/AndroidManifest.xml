@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="mccreemainwoody.personal.notepad.notepad_perso">
+    package="mccreemainwoody.personal.notepad.notepadd">
    <application
-        android:label="notepad_perso"
+        android:label="notepadd"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

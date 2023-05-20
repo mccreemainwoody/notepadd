@@ -1,4 +1,4 @@
-package mccreemainwoody.personal.notepad.notepadd
+package mccreemainwoody.projets.bts.notepadd.notepadd
 
 import io.flutter.embedding.android.FlutterActivity
 

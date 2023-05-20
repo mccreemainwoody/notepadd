@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 
 class NotepaddFontStyle{
-  static const styleTexteBase = TextStyle(fontWeight: FontWeight.bold);
+  static const styleTexteBase = TextStyle(
+    fontFamily: 'Roboto',
+    fontWeight: FontWeight.bold,
+    color: Colors.black,
+  );
 
   static final TextStyle styleTexteTitre = styleTexteBase.copyWith(
-    fontSize: 26.0,
-    color: Colors.lightGreen,
+    fontSize: 28.0,
+    color: Colors.blue,
+  );
+  static final TextStyle styleTexteSousTitre = styleTexteBase.copyWith(
+    fontSize: 22.0,
   );
   static final TextStyle styleTexteHeader = styleTexteBase.copyWith(
     fontSize: 20.0,

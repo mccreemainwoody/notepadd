@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 //import 'package:notepadd/global/font.dart';
 import 'package:notepadd/global/models/menu.dart';
+import 'package:notepadd/notes/main.dart';
+import 'package:notepadd/todo/main.dart';
+import 'package:notepadd/calendrier/main.dart';
 
 void main() {
   runApp(const MyApp());
@@ -77,9 +80,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final _menus = [
-    Menu('Notes', Colors.lightGreen),
-    Menu('Tâches', Colors.redAccent),
-    Menu('Calendrier', Colors.brown)
+    Menu('Notes', const NotesApp(), Colors.lightGreen),
+    Menu('Tâches', const ToDoApp(), Colors.redAccent),
+    Menu('Calendrier', const CalendrierApp(), Colors.brown)
   ];
 
   @override
@@ -97,8 +100,8 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.max,
               children: [
-                _buildInkWellSquare(context, _menus[0], 195, '/'),
-                _buildInkWellSquare(context, _menus[1], 195, '/')
+                _buildInkWellSquare(context, _menus[0], 195),
+                _buildInkWellSquare(context, _menus[1], 195)
               ],
             ),
 
@@ -111,10 +114,13 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 
-_buildInkWellSquare(BuildContext context, Menu menu, double size, String link) {
+_buildInkWellSquare(BuildContext context, Menu menu, double size) {
   return InkWell(
     onTap: () {
-      Navigator.pushNamed(context, link);
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => menu.lien)
+      );
     },
     child: _buildSquare(context, menu, size)
   );

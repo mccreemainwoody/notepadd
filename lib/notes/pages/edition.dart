@@ -44,7 +44,7 @@ class _EditionNotePageState extends State<EditionNotePage> {
   }
 
   void sauvegarderNote() {
-    widget.note.contenu = _controller.document.toPlainText();
+    widget.note.contenu = _controller.document.toPlainText().trimRight();
     widget.estNouvelleNote ? ajouterNote() : modifierNote();
   }
 
@@ -75,30 +75,35 @@ class _EditionNotePageState extends State<EditionNotePage> {
             ]),
         body: Column(
           children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    child: TextField(
+                      controller: TextEditingController()
+                        ..text = widget.note.titre,
+                      decoration: const InputDecoration(
+                        hintText: 'Titre de la note',
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (value) {
+                        widget.note.titre = value;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
             QuillToolbar.basic(
               controller: _controller,
               toolbarIconSize: 20,
-              showBoldButton: false,
-              showItalicButton: false,
-              showUnderLineButton: false,
-              showColorButton: false,
               showBackgroundColorButton: false,
               showClearFormat: false,
-              showQuote: false,
-              showCodeBlock: false,
-              showIndent: false,
               showHeaderStyle: false,
-              showLink: false,
-              showListNumbers: false,
-              showListBullets: false,
-              showListCheck: false,
-              showStrikeThrough: false,
               showSubscript: false,
               showSuperscript: false,
               showFontFamily: false,
-              showFontSize: false,
-              showInlineCode: false,
-              showSearchButton: false,
             ),
             Expanded(
                 child: Container(

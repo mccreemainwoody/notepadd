@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/note.dart';
 
-class HiveNotes{
+class PersistanceNotes{
   final _box = Hive.box('notes');
 
   List<Note> chargerNotes() => _box.values.toList().cast<Note>();

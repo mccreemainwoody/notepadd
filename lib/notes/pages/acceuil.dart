@@ -15,13 +15,26 @@ class NotesHome extends StatefulWidget {
 class _NotesHomeState extends State<NotesHome> {
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-        builder: (context, value, child) => _buildScaffold(context));
+    return Consumer(builder: (context, value, child) => _buildScaffold(context));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<NotesData>(context, listen: false).InitialiserNotes();
+  }
+
+  String formaterContenuNote(Note note){
+    if (note.contenu == null) return '';
+    String contenu = note.contenu!;
+    if (RegExp(r'\n').hasMatch(contenu)) contenu = '${contenu.split('\n')[0]}...';
+    if (contenu.length > 100) contenu = '${contenu.substring(0, 96)}...';
+    return contenu;
   }
 
   void _creerNouvelleNote(BuildContext context) {
     Note nouvelleNote =
-        Provider.of<NotesData>(context, listen: false).creerNouvelleNote();
+    Provider.of<NotesData>(context, listen: false).creerNouvelleNote();
     _editerNote(nouvelleNote, true);
   }
 
@@ -58,14 +71,14 @@ class _NotesHomeState extends State<NotesHome> {
                 child:
                 notes.isEmpty
                     ? const Center(
-                        child: Text('Aucune note pour l\'instant !'),
-                      )
+                  child: Text('Aucune note pour l\'instant !'),
+                )
                     : ListView.builder(
-                        itemCount: notes.length,
-                        itemBuilder: (context, i) {
-                          return _buildNote(notes[i], notesData);
-                        },
-                      ),
+                  itemCount: notes.length,
+                  itemBuilder: (context, i) {
+                    return _buildNote(notes[i], notesData);
+                  },
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -74,6 +87,7 @@ class _NotesHomeState extends State<NotesHome> {
                       onPressed: () {
                         _viderNotes();
                       },
+                      backgroundColor: Colors.red,
                       child: const Icon(Icons.delete_forever)
                   ),
                   FloatingActionButton(
@@ -93,7 +107,7 @@ class _NotesHomeState extends State<NotesHome> {
     return Card(
       child: ListTile(
         title: Text(note.titre),
-        subtitle: Text(note.contenu ?? ''),
+        subtitle: Text(formaterContenuNote(note)),
         onTap: () {
           _editerNote(note, false);
         },

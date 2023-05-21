@@ -1,30 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:notepadd/notes/data/persistance.dart';
 
 import 'note.dart';
 
 
 class NotesData extends ChangeNotifier{
-  List<Note> notes = [
-    Note(
-        id: 1,
-        titre: 'Amogus',
-        contenu: 'amogus'
-    ),
-    Note(
-        id: 2,
-        titre: 'waltuh',
-        contenu: 'jesse'
-    ),
-    Note(
-        id: 402,
-        titre: 'gus',
-        contenu: 'sug'
-    ),
-  ];
+  final db = PersistanceNotes();
+  List<Note> notes = [];
 
-  List<Note> getNotes(){
-    return notes;
+  void InitialiserNotes(){
+    notes = db.chargerNotes();
+    notifyListeners();
   }
+
+  List<Note> getNotes() => notes;
 
   void add(Note note){
     notes.add(note);

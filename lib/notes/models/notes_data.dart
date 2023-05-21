@@ -2,28 +2,23 @@ import 'package:flutter/material.dart';
 
 import 'note.dart';
 
+
 class NotesData extends ChangeNotifier{
   List<Note> notes = [
     Note(
         id: 1,
         titre: 'Amogus',
-        contenu: 'amogus',
-        dateCreation: DateTime.now(),
-        isImportant: false
+        contenu: 'amogus'
     ),
     Note(
         id: 2,
         titre: 'waltuh',
-        contenu: 'jesse',
-        dateCreation: DateTime.now(),
-        isImportant: false
+        contenu: 'jesse'
     ),
     Note(
         id: 402,
         titre: 'gus',
-        contenu: 'sug',
-        dateCreation: DateTime.now(),
-        isImportant: false
+        contenu: 'sug'
     ),
   ];
 
@@ -36,20 +31,18 @@ class NotesData extends ChangeNotifier{
     notifyListeners();
   }
 
+  void update(Note note){
+    notes[notes.indexWhere((element) => element.id == note.id)].update(note);
+    notifyListeners();
+  }
+
   void remove(Note note){
     notes.remove(note);
     notifyListeners();
   }
 
   void removeSelection(List<Note> notesToRemove){
-    notesToRemove.forEach((note) {
-      notes.remove(note);
-    });
-    notifyListeners();
-  }
-
-  void update(Note note){
-    notes[notes.indexWhere((element) => element.id == note.id)] = note;
+    notesToRemove.forEach((note) { notes.remove(note); });
     notifyListeners();
   }
 
@@ -62,10 +55,7 @@ class NotesData extends ChangeNotifier{
     return Note(
       id: notes.length + 1,
       titre: '',
-      contenu: '',
-      dateCreation: DateTime.now(),
-      dateModification: null,
-      isImportant: false
+      contenu: ''
     );
   }
 }

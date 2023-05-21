@@ -35,7 +35,6 @@ class _EditionNotePageState extends State<EditionNotePage> {
   }
 
   void ajouterNote() {
-    widget.note.dateCreation = DateTime.now();
     Provider.of<NotesData>(context, listen: false).add(widget.note);
   }
 
@@ -44,9 +43,13 @@ class _EditionNotePageState extends State<EditionNotePage> {
     Provider.of<NotesData>(context, listen: false).update(widget.note);
   }
 
-  void sauvegarderNote(){
+  void sauvegarderNote() {
     widget.note.contenu = _controller.document.toPlainText();
     widget.estNouvelleNote ? ajouterNote() : modifierNote();
+  }
+
+  void supprimerNote() {
+    Provider.of<NotesData>(context, listen: false).remove(widget.note);
   }
 
   @override
@@ -58,19 +61,14 @@ class _EditionNotePageState extends State<EditionNotePage> {
               IconButton(
                 icon: const Icon(Icons.delete),
                 onPressed: () {
-                  Provider.of<NotesData>(context, listen: false)
-                      .remove(widget.note);
+                  supprimerNote();
                   Navigator.pop(context);
                 },
               ),
               IconButton(
                 icon: const Icon(Icons.save),
                 onPressed: () {
-                  if (widget.estNouvelleNote) {
-                    ajouterNote();
-                  } else {
-                    modifierNote();
-                  }
+                  sauvegarderNote();
                   Navigator.pop(context);
                 },
               ),
@@ -102,16 +100,12 @@ class _EditionNotePageState extends State<EditionNotePage> {
               showInlineCode: false,
               showSearchButton: false,
             ),
-
             Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(8),
-                  child: QuillEditor.basic(
-                      controller: _controller,
-                      readOnly: false
-                  ),
-                )
-            )
+              padding: const EdgeInsets.all(8),
+              child:
+                  QuillEditor.basic(controller: _controller, readOnly: false),
+            ))
           ],
         ));
   }

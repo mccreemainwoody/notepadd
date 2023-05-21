@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
 //import 'package:notepadd/global/font_global.dart';
 import 'package:notepadd/global/models/menu.dart';
 import 'package:notepadd/notes/main.dart';
@@ -7,7 +9,13 @@ import 'package:notepadd/calendrier/main.dart';
 
 import 'package:notepadd/global/theme.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+
+  await Hive.openBox('notes');
+  await Hive.openBox('todo');
+  await Hive.openBox('calendrier');
+
   runApp(const MyApp());
 }
 

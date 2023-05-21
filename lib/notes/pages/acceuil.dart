@@ -19,13 +19,13 @@ class _NotesHomeState extends State<NotesHome> {
         builder: (context, value, child) => _buildScaffold(context));
   }
 
-  _creerNouvelleNote(BuildContext context) {
+  void _creerNouvelleNote(BuildContext context) {
     Note nouvelleNote =
         Provider.of<NotesData>(context, listen: false).creerNouvelleNote();
     _editerNote(nouvelleNote, true);
   }
 
-  _editerNote(Note note, bool estNouvelleNote) {
+  void _editerNote(Note note, bool estNouvelleNote) {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -34,11 +34,15 @@ class _NotesHomeState extends State<NotesHome> {
     );
   }
 
-  _supprimerNote(Note note) {
+  void _supprimerNote(Note note) {
     Provider.of<NotesData>(context, listen: false).remove(note);
   }
 
-  _buildScaffold(BuildContext context) {
+  void _viderNotes() {
+    Provider.of<NotesData>(context, listen: false).clear();
+  }
+
+  Scaffold _buildScaffold(BuildContext context) {
     NotesData notesData = Provider.of<NotesData>(context);
     List<Note> notes = notesData.getNotes();
 
@@ -64,8 +68,14 @@ class _NotesHomeState extends State<NotesHome> {
                       ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  FloatingActionButton(
+                      onPressed: () {
+                        _viderNotes();
+                      },
+                      child: const Icon(Icons.delete_forever)
+                  ),
                   FloatingActionButton(
                     onPressed: () {
                       _creerNouvelleNote(context);
@@ -79,7 +89,7 @@ class _NotesHomeState extends State<NotesHome> {
         ));
   }
 
-  _buildNote(Note note, NotesData notesData) {
+  Card _buildNote(Note note, NotesData notesData) {
     return Card(
       child: ListTile(
         title: Text(note.titre),

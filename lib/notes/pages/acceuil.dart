@@ -15,7 +15,7 @@ class _NotesHomeState extends State<NotesHome>{
         title: const Text('Notepad+++'),
       ),
       body: const Center(
-        child: Text('amogus'),
+        child: Text('augh'),
       ),
     );
   }

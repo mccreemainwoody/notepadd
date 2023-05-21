@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Notepad+++',
-      theme: ThemeApp,
+      theme: themeApp,
       home: const MyHomePage(title: 'Notepad+++'),
     );
   }

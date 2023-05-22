@@ -24,13 +24,11 @@ jobs:
       # - uses: dart-lang/setup-dart@v1
       - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
           
-      - name: Install Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.0.0'
           channel: 'stable'
-          
-      - name: Install Java
+      
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'

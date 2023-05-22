@@ -8,41 +8,49 @@ class NotesData extends ChangeNotifier{
   final db = PersistanceNotes();
   List<Note> notes = [];
 
-  void InitialiserNotes(){
-    notes = db.chargerNotes();
+  void initialiserNotes(){
+    chargerNotes();
+  }
+
+  void rechargerNotes(){
+    chargerNotes();
     notifyListeners();
+  }
+
+  void chargerNotes(){
+    notes = db.chargerNotes();
   }
 
   List<Note> getNotes() => notes;
 
   void add(Note note){
-    notes.add(note);
-    notifyListeners();
+    db.ajouterNotes(note);
+    rechargerNotes();
   }
 
   void update(Note note){
-    notes[notes.indexWhere((element) => element.id == note.id)].update(note);
-    notifyListeners();
+    note.dateModification = DateTime.now();
+    db.modifierNotes(notes.indexOf(note), note);
+    rechargerNotes();
   }
 
-  void remove(Note note){
-    notes.remove(note);
-    notifyListeners();
+  void remove(Note note, {bool rechargerApresSuppression = false}){
+    db.supprimerNotes(notes.indexOf(note));
+    if(!rechargerApresSuppression) rechargerNotes();
   }
 
   void removeSelection(List<Note> notesToRemove){
-    notesToRemove.forEach((note) { notes.remove(note); });
-    notifyListeners();
+    notesToRemove.forEach((note) { remove(note, rechargerApresSuppression: true); });
+    rechargerNotes();
   }
 
   void clear(){
-    notes.clear();
-    notifyListeners();
+    db.viderNotes();
+    rechargerNotes();
   }
 
   Note creerNouvelleNote() {
     return Note(
-      id: notes.length + 1,
       titre: '',
       contenu: ''
     );

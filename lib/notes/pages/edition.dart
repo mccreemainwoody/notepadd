@@ -39,7 +39,6 @@ class _EditionNotePageState extends State<EditionNotePage> {
   }
 
   void modifierNote() {
-    widget.note.dateModification = DateTime.now();
     Provider.of<NotesData>(context, listen: false).update(widget.note);
   }
 

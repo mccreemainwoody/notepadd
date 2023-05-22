@@ -21,7 +21,7 @@ class _NotesHomeState extends State<NotesHome> {
   @override
   void initState() {
     super.initState();
-    Provider.of<NotesData>(context, listen: false).InitialiserNotes();
+    Provider.of<NotesData>(context, listen: false).initialiserNotes();
   }
 
   String formaterContenuNote(Note note){
@@ -84,6 +84,7 @@ class _NotesHomeState extends State<NotesHome> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   FloatingActionButton(
+                      heroTag: 'viderNotes',
                       onPressed: () {
                         _viderNotes();
                       },
@@ -91,6 +92,7 @@ class _NotesHomeState extends State<NotesHome> {
                       child: const Icon(Icons.delete_forever)
                   ),
                   FloatingActionButton(
+                    heroTag: 'creerNouvelleNote',
                     onPressed: () {
                       _creerNouvelleNote(context);
                     },

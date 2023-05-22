@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
-//import 'package:notepadd/global/font.dart';
-import 'package:notepadd/global/models/menu.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+//import 'package:notepadd/global/font_global.dart';
+import 'package:notepadd/global/models/menu.dart';
+import 'package:notepadd/notes/main.dart';
+import 'package:notepadd/todo/main.dart';
+import 'package:notepadd/calendrier/main.dart';
+
+import 'package:notepadd/global/theme.dart';
+
+void main() async {
+  await Hive.initFlutter();
+
+  await Hive.openBox('notes');
+  await Hive.openBox('todo');
+  await Hive.openBox('calendrier');
+
   runApp(const MyApp());
 }
 
@@ -13,54 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Notepad+++',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.green,
-          backgroundColor: Colors.black,
-          accentColor: Colors.green,
-          cardColor: Colors.black,
-          errorColor: Colors.red,
-          brightness: Brightness.dark,
-        ),
-
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.green,
-        ),
-
-        fontFamily: 'Roboto',
-
-        textTheme: const TextTheme(
-          displayLarge: TextStyle(
-            fontSize : 28.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-
-          titleLarge: TextStyle(
-            fontSize : 24.0,
-            fontWeight: FontWeight.bold,
-          ),
-          titleMedium: TextStyle(
-            fontSize : 22.0,
-            fontWeight: FontWeight.bold,
-          ),
-          titleSmall: TextStyle(
-            fontSize : 20.0,
-            fontWeight: FontWeight.bold,
-          ),
-
-          bodyLarge: TextStyle(
-            fontSize : 18.0,
-          ),
-          bodyMedium: TextStyle(
-            fontSize : 16.0,
-          ),
-          bodySmall: TextStyle(
-            fontSize : 12.0,
-          )
-        ),
-      ),
-
+      theme: themeApp,
       home: const MyHomePage(title: 'Notepad+++'),
     );
   }
@@ -77,9 +43,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final _menus = [
-    Menu('Notes', Colors.lightGreen),
-    Menu('Tâches', Colors.redAccent),
-    Menu('Calendrier', Colors.brown)
+    Menu('Notes', const NotesApp(), Colors.lightGreen),
+    Menu('Tâches', const ToDoApp(), Colors.redAccent),
+    Menu('Calendrier', const CalendrierApp(), Colors.brown)
   ];
 
   @override
@@ -97,8 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.max,
               children: [
-                _buildInkWellSquare(context, _menus[0], 195, '/'),
-                _buildInkWellSquare(context, _menus[1], 195, '/')
+                _buildInkWellSquare(context, _menus[0], 195),
+                _buildInkWellSquare(context, _menus[1], 195)
               ],
             ),
 
@@ -111,10 +77,13 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 
-_buildInkWellSquare(BuildContext context, Menu menu, double size, String link) {
+_buildInkWellSquare(BuildContext context, Menu menu, double size) {
   return InkWell(
     onTap: () {
-      Navigator.pushNamed(context, link);
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => menu.lien)
+      );
     },
     child: _buildSquare(context, menu, size)
   );

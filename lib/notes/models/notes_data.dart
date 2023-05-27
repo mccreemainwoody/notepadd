@@ -1,58 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:notepadd/notes/data/persistance.dart';
+import 'package:notepadd/global/models/bases/manager_data.dart';
 
 import 'note.dart';
+import '../data/notes_persistance.dart';
 
 
-class NotesData extends ChangeNotifier{
-  final db = PersistanceNotes();
-  List<Note> notes = [];
+class NotesData extends ConstructeurManagerData<Note, PersistanceNotes>{
+  @override
+  PersistanceNotes db = PersistanceNotes();
 
-  void initialiserNotes(){
-    chargerNotes();
-  }
+  @override
+  void chargerElements() => liste = db.chargerNotes();
 
-  void rechargerNotes(){
-    chargerNotes();
-    notifyListeners();
-  }
 
-  void chargerNotes(){
-    notes = db.chargerNotes();
-  }
+  void initialiserNotes() => initialiserElements();
 
-  List<Note> getNotes() => notes;
-
-  void add(Note note){
-    db.ajouterNotes(note);
-    rechargerNotes();
-  }
-
-  void update(Note note){
-    note.dateModification = DateTime.now();
-    db.modifierNotes(notes.indexOf(note), note);
-    rechargerNotes();
-  }
-
-  void remove(Note note, {bool rechargerApresSuppression = false}){
-    db.supprimerNotes(notes.indexOf(note));
-    if(!rechargerApresSuppression) rechargerNotes();
-  }
-
-  void removeSelection(List<Note> notesToRemove){
-    notesToRemove.forEach((note) { remove(note, rechargerApresSuppression: true); });
-    rechargerNotes();
-  }
-
-  void clear(){
-    db.viderNotes();
-    rechargerNotes();
-  }
+  List<Note> getNotes() => getElements();
 
   Note creerNouvelleNote() {
     return Note(
-      titre: '',
-      contenu: ''
+        titre: '',
+        contenu: ''
     );
   }
 }

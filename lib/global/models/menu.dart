@@ -11,9 +11,7 @@ class Menu{
     'Calendrier': Icons.calendar_month
   };
 
-  IconData getIcon(){
-    return icons[title];
-  }
-
   Menu(this.title, this.lien, this.color);
+
+  IconData getIcon() => icons[title];
 }

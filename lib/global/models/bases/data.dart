@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-class ConstructeurData{
+class ConstructeurData {
   String titre;
   final DateTime dateCreation;
   DateTime? dateModification;
@@ -8,24 +8,24 @@ class ConstructeurData{
   ConstructeurData(this.titre, {dateCreationParam, this.dateModification})
       : dateCreation = dateCreationParam ?? DateTime.now();
 
-  factory ConstructeurData.fromJson(Map<dynamic, dynamic> json) {
-    return ConstructeurData(json['titre']);
-  }
+  factory ConstructeurData.fromJson(Map<dynamic, dynamic> json) =>
+      ConstructeurData(json['titre']);
 
-  ConstructeurData fromJson(Map<dynamic, dynamic> json) {
-    return ConstructeurData.fromJson(json);
-  }
+  ConstructeurData fromJson(Map<dynamic, dynamic> json) =>
+      ConstructeurData.fromJson(json);
 
   Map<String, dynamic> toJson() => {
-    'titre': titre,
-    'dateCreation': dateCreation.toIso8601String(),
-    'dateModification': dateModification == null ? null : dateModification!.toIso8601String()
-  };
+        'titre': titre,
+        'dateCreation': dateCreation.toIso8601String(),
+        'dateModification': dateModification == null
+            ? null
+            : dateModification!.toIso8601String()
+      };
 
   String toString() => titre;
 
   @protected
-  void update(String titre){
+  void updateBase(String titre) {
     updateTitre(titre);
     updateDateModification();
   }

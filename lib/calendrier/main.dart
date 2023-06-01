@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:notepadd/calendrier/models/event_data.dart';
+
+import '../global/theme.dart';
+import 'pages/accueil.dart';
 
 
 class CalendrierApp extends StatefulWidget {
@@ -11,25 +16,15 @@ class CalendrierApp extends StatefulWidget {
 class _CalendrierAppState extends State<CalendrierApp> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Calendrier App',
-      home: Calendrier(),
-    );
-  }
-}
-
-class Calendrier extends StatefulWidget {
-  const Calendrier({Key? key}) : super(key: key);
-
-  @override
-  State<Calendrier> createState() => _CalendrierState();
-}
-
-class _CalendrierState extends State<Calendrier> {
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Text('Calendrier')
+    return ChangeNotifierProvider(
+        create: (context) => EventsData(),
+        builder: (context, child) {
+          return MaterialApp(
+            title: 'Notes',
+            theme: themeApp,
+            home: const CalendrierHome(),
+          );
+        }
     );
   }
 }

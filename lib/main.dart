@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 //import 'package:notepadd/global/font_global.dart';
 import 'package:notepadd/global/models/menu.dart';
@@ -16,7 +17,7 @@ void main() async {
   await Hive.openBox('todo');
   await Hive.openBox('calendrier');
 
-  runApp(const MyApp());
+  initializeDateFormatting().then((_) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -92,7 +93,10 @@ _buildInkWellSquare(BuildContext context, Menu menu, double size) {
 _buildInkWellRectangle(BuildContext context, Menu menu, double width, double height, String link) {
   return InkWell(
     onTap: () {
-      Navigator.pushNamed(context, link);
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => menu.lien)
+      );
     },
     child: _buildRectangle(context, menu, width, height),
   );

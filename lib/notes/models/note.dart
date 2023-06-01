@@ -1,22 +1,23 @@
-class Note {
-  String titre;
+import 'package:notepadd/global/models/bases/data.dart';
+
+class Note extends ConstructeurData {
   String? contenu;
-  final DateTime dateCreation;
-  DateTime? dateModification;
   bool estImportant;
 
   Note(
-      {required this.titre,
+      {required String titre,
       required this.contenu,
-      dateCreationParam,
-      this.dateModification,
+      DateTime? dateCreationParam,
+      DateTime? dateModification,
       this.estImportant = false})
-      : dateCreation = dateCreationParam ?? DateTime.now();
+      : super(titre,
+            dateCreationParam: dateCreationParam,
+            dateModification: dateModification);
 
   factory Note.fromJson(Map<dynamic, dynamic> json) {
     return Note(
-        titre: json['title'],
-        contenu: json['content'],
+        titre: json['titre'],
+        contenu: json['contenu'],
         dateCreationParam: DateTime.parse(json['dateCreation']),
         dateModification: json['dateModification'] == null
             ? null
@@ -24,40 +25,23 @@ class Note {
         estImportant: json['estImportant'] > 0);
   }
 
-  String toString() {
-    return 'Note{titre: $titre, contenu: $contenu, dateCreation: $dateCreation, dateModification: $dateModification, isImportant: $estImportant}';
+  @override
+  Map<String, dynamic> toJson() => super.toJson()
+    ..addAll({'contenu': contenu, 'estImportant': estImportant ? 1 : 0});
+
+  void updateTout(String titre, String? contenu, bool estImportant) {
+    updateBase(titre);
+    updateContenu(contenu);
+    updateEstImportant(estImportant);
   }
 
-  Map<String, dynamic> toJson() => {
-        'title': titre,
-        'content': contenu,
-        'dateCreation': dateCreation.toIso8601String(),
-        'dateModification': dateModification == null
-            ? null
-            : dateModification!.toIso8601String(),
-        'estImportant': estImportant ? 1 : 0
-      };
+  @override
+  String toString() =>
+      'Note{titre: $titre, contenu: $contenu, dateCreation: $dateCreation, '
+      'dateModification: $dateModification, isImportant: $estImportant}';
 
-  void update(Note note) {
-    updateTitre(note.titre);
-    updateContenu(note.contenu);
-    updateDateModification();
-    updateIsImportant(note.estImportant);
-  }
+  void updateContenu(String? contenu) => this.contenu = contenu;
 
-  void updateTitre(String titre) {
-    this.titre = titre;
-  }
-
-  void updateContenu(String? contenu) {
-    this.contenu = contenu;
-  }
-
-  void updateDateModification() {
-    dateModification = DateTime.now();
-  }
-
-  void updateIsImportant(bool estImportant) {
-    this.estImportant = estImportant;
-  }
+  void updateEstImportant(bool estImportant) =>
+      this.estImportant = estImportant;
 }

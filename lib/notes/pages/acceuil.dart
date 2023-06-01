@@ -76,7 +76,7 @@ class _NotesHomeState extends State<NotesHome> {
                     : ListView.builder(
                   itemCount: notes.length,
                   itemBuilder: (context, i) {
-                    return _buildNote(notes[i], notesData);
+                    return _buildNote(notes[i]);
                   },
                 ),
               ),
@@ -88,6 +88,7 @@ class _NotesHomeState extends State<NotesHome> {
                       onPressed: () {
                         _viderNotes();
                       },
+                      tooltip: 'Supprimer toutes les notes',
                       backgroundColor: Colors.red,
                       child: const Icon(Icons.delete_forever)
                   ),
@@ -96,6 +97,7 @@ class _NotesHomeState extends State<NotesHome> {
                     onPressed: () {
                       _creerNouvelleNote(context);
                     },
+                    tooltip: 'Ajouter une note',
                     child: const Icon(Icons.add),
                   ),
                 ],
@@ -105,7 +107,7 @@ class _NotesHomeState extends State<NotesHome> {
         ));
   }
 
-  Card _buildNote(Note note, NotesData notesData) {
+  Card _buildNote(Note note) {
     return Card(
       child: ListTile(
         title: Text(note.titre),

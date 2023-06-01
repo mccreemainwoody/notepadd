@@ -12,9 +12,7 @@ abstract class ConstructeurManagerData<TData extends ConstructeurData,
   late List<TData> liste = [];
 
   @protected
-  void initialiserElements() {
-    chargerElements();
-  }
+  void initialiserElements() => chargerElements();
 
   @protected
   void rechargerElements() {

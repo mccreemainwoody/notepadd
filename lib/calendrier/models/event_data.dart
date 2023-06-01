@@ -21,6 +21,5 @@ class EventsData extends ConstructeurManagerData<Event, CalendrierPersistance> {
           event.date!.year == jour.year)
       .toList();
 
-  Event creerNouveauEvent() => Event('Nouvel évènement',
-      date: DateTime.now(), dateCreationParam: DateTime.now());
+  Event creerNouveauEvent() => Event('Nouvel évènement', date: DateTime.now());
 }

@@ -31,36 +31,76 @@ class _EditionEventPageState extends State<EditionEventPage> {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController dateEventControlleur = TextEditingController();
+
     return Scaffold(
         appBar: AppBar(
             title: Text(widget.estNouvelEvent ? 'Nouvel événement' : 'Modifier l\'événement'),
             actions: [
-              IconButton(
-                  onPressed: sauvegarderEvent,
-                  icon: const Icon(Icons.save)
-              ),
-              !widget.estNouvelEvent ? IconButton(
-                  onPressed: supprimerEvent,
-                  icon: const Icon(Icons.delete)
-              ) : Container(),
-            ]
-        ),
+              _buildBoutonSauvegarder(),
+              !widget.estNouvelEvent
+                  ? _buildBoutonSupprimer()
+                  : Container(),
+            ]),
         body: Column(
           children: [
-            TextField(
-              decoration: const InputDecoration(labelText: 'Titre'),
-              controller: TextEditingController(text: getEvent().titre),
-              onChanged: (value) => getEvent().titre = value,
-            ),
-            InputDatePickerFormField(
-              initialDate: getEvent().date ?? DateTime.now(),
-              firstDate: DateTime(2000,1,1),
-              lastDate: DateTime.now()..add(const Duration(days: 365*10)),
-              onDateSubmitted: (value) => getEvent().date = value,
-              keyboardType: TextInputType.datetime,
-            ),
+            _buildChampTitre(),
+            _buildChampDateHeure(context, dateEventControlleur)
           ],
-        )
-    );
+        ));
+  }
+
+  IconButton _buildBoutonSupprimer() => IconButton(
+      onPressed: supprimerEvent,
+      icon: const Icon(Icons.delete)
+  );
+
+  IconButton _buildBoutonSauvegarder() => IconButton(
+      onPressed: sauvegarderEvent,
+      icon: const Icon(Icons.save)
+  );
+
+  Padding _buildChampTitre() => Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+          decoration: const InputDecoration(
+              labelText: 'Titre', icon: Icon(Icons.title)),
+          controller: TextEditingController(text: getEvent().titre),
+          onChanged: (value) => getEvent().titre = value));
+
+
+  Padding _buildChampDateHeure(
+      BuildContext context, TextEditingController controller) {
+    DateTime dateActuelle = getEvent().date ?? DateTime.now();
+    if (!widget.estNouvelEvent) controller.text = dateActuelle.toString();
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+              labelText: 'Date de l\'événement',
+              icon: Icon(Icons.calendar_month)),
+          onTap: () async {
+            DateTime? date = await showDatePicker(
+                context: context,
+                initialDate: dateActuelle,
+                firstDate: DateTime(2000, 1, 1),
+                lastDate: DateTime.now().add(const Duration(days: 365 * 10))
+            );
+
+            if (date == null) return;
+
+            TimeOfDay? heure = await showTimePicker(
+                context: context,
+                initialTime: TimeOfDay.now()
+            );
+
+            getEvent().date = heure != null
+                ? DateTime(date.year, date.month, date.day, heure.hour, heure.minute)
+                : date;
+
+            controller.text = getEvent().date.toString();
+          },
+        ));
   }
 }

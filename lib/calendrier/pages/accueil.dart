@@ -29,7 +29,9 @@ class _CalendrierHomeState extends State<CalendrierHome> {
   void _editerEvent(Event event, bool estNouvelEvent) => Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => EditionEventPage(event, estNouvelEvent)));
+          builder: (context) => EditionEventPage(event, estNouvelEvent)
+      )
+  );
 
   void _supprimerEvent(Event event) => _getEventsData().remove(event);
 
@@ -42,9 +44,7 @@ class _CalendrierHomeState extends State<CalendrierHome> {
   }
 
   @override
-  Widget build(BuildContext context) => _buildScaffold();
-
-  Scaffold _buildScaffold() => Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
         title: const Text('Calendrier'),
       ),
@@ -54,22 +54,23 @@ class _CalendrierHomeState extends State<CalendrierHome> {
           _buildListeEvents(),
           _buildBoutonsActions(),
         ],
-      ));
+      )
+  );
 
   TableCalendar _buildCalendrier() => TableCalendar(
-        locale: 'fr_FR',
-        firstDay: DateTime.utc(2010, 10, 16),
-        lastDay: DateTime.utc(2030, 3, 14),
-        focusedDay: _today,
-        startingDayOfWeek: StartingDayOfWeek.monday,
-        calendarFormat: _calendarFormat,
-        onDaySelected: _onDaySelected,
-        onFormatChanged: _onFormatChanged,
-        onPageChanged: _onPageChanged,
-        selectedDayPredicate: (day) => isSameDay(_jourSelectionne, day),
-        availableGestures: AvailableGestures.all,
-        eventLoader: _eventLoader,
-      );
+      locale: 'fr_FR',
+      firstDay: DateTime.utc(2010, 10, 16),
+      lastDay: DateTime.utc(2030, 3, 14),
+      focusedDay: _today,
+      startingDayOfWeek: StartingDayOfWeek.monday,
+      calendarFormat: _calendarFormat,
+      onDaySelected: _onDaySelected,
+      onFormatChanged: _onFormatChanged,
+      onPageChanged: _onPageChanged,
+      selectedDayPredicate: (day) => isSameDay(_jourSelectionne, day),
+      availableGestures: AvailableGestures.all,
+      eventLoader: _eventLoader,
+  );
 
   Expanded _buildListeEvents() {
     List<Event> _eventsPourCeJour = _getEventsForDay(_jourSelectionne);
@@ -80,8 +81,9 @@ class _CalendrierHomeState extends State<CalendrierHome> {
         itemBuilder: (context, index) {
           return ListTile(
               title: Text(_eventsPourCeJour[index].titre),
-              subtitle: Text('${_eventsPourCeJour[index].date?.hour}:'
-                  '${_eventsPourCeJour[index].date?.minute}'),
+              subtitle: Text(
+                  '${_eventsPourCeJour[index].date?.hour}:${_eventsPourCeJour[index].date?.minute}'
+              ),
               onTap: () => _editerEvent(_eventsPourCeJour[index], false),
               trailing: IconButton(
                 icon: const Icon(Icons.delete),

@@ -4,21 +4,24 @@ import 'data.dart';
 
 abstract class ConstructeurPersistance<T extends ConstructeurData> {
   @protected
-  late final Box<dynamic> box;
+  late final String nomBox;
 
   @protected
-  List<T> purgerElementsCorrompusEtRetournerElementsValides() {
-    var listeElements = box.values.toList().cast<Map<dynamic, dynamic>>();
+  late final Box<dynamic> box = Hive.box(nomBox);
+
+  @protected
+  List<T> _purgerElementsCorrompusEtRetournerElementsValides() {
+    var listeElements = box.values.toList();
     List<T> elementsValides = [];
 
-    listeElements.forEach((element) {
+    for (var element in listeElements) {
       try{
         elementsValides.add(construireObjetPourTransfertDepuisBdDVersLocal(element));
       } catch (e) {
         print("Erreur détecté avec l'élément $element. Suppression\n$e");
         supprimerElement(listeElements.indexOf(element));
       }
-    });
+    }
 
     return elementsValides;
   }
@@ -26,7 +29,7 @@ abstract class ConstructeurPersistance<T extends ConstructeurData> {
   @protected
   T construireObjetPourTransfertDepuisBdDVersLocal(json);
 
-  List<T> chargerElements() => purgerElementsCorrompusEtRetournerElementsValides();
+  List<T> chargerElements() => _purgerElementsCorrompusEtRetournerElementsValides();
 
   void ajouterElement(T element) => box.add(element.toJson());
 

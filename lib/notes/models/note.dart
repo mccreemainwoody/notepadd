@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:notepadd/global/models/bases/data.dart';
 
 class Note extends ConstructeurData {
@@ -14,20 +15,29 @@ class Note extends ConstructeurData {
             dateCreationParam: dateCreationParam,
             dateModification: dateModification);
 
-  factory Note.fromJson(Map<dynamic, dynamic> json) {
-    return Note(
-        titre: json['titre'],
-        contenu: json['contenu'],
-        dateCreationParam: DateTime.parse(json['dateCreation']),
-        dateModification: json['dateModification'] == null
-            ? null
-            : DateTime.parse(json['dateModification']),
-        estImportant: json['estImportant'] > 0);
-  }
+
+  factory Note.fromMap(Map<String, dynamic> map) => Note(
+      titre: map['titre'],
+      contenu: map['contenu'],
+      dateCreationParam: DateTime.parse(map['dateCreation']),
+      dateModification: map['dateModification'] == null
+          ? null
+          : DateTime.parse(map['dateModification']),
+      estImportant: map['estImportant'] > 0);
+
+  factory Note.fromJson(String json) => Note.fromMap(jsonDecode(json));
+
 
   @override
-  Map<String, dynamic> toJson() => super.toJson()
-    ..addAll({'contenu': contenu, 'estImportant': estImportant ? 1 : 0});
+  String toString() =>
+      'Note{titre: $titre, contenu: $contenu, dateCreation: $dateCreation, '
+          'dateModification: $dateModification, estImportant: $estImportant}';
+
+  @override
+  Map<String, dynamic> toMap() => super.toMap()..addAll({
+    'contenu': contenu,
+    'estImportant': estImportant ? 1 : 0
+  });
 
   void updateTout(String titre, String? contenu, bool estImportant) {
     updateBase(titre);
@@ -35,13 +45,7 @@ class Note extends ConstructeurData {
     updateEstImportant(estImportant);
   }
 
-  @override
-  String toString() =>
-      'Note{titre: $titre, contenu: $contenu, dateCreation: $dateCreation, '
-      'dateModification: $dateModification, isImportant: $estImportant}';
+  void updateContenu(String? contenu) => updateQuelqueChose(() => this.contenu = contenu);
 
-  void updateContenu(String? contenu) => this.contenu = contenu;
-
-  void updateEstImportant(bool estImportant) =>
-      this.estImportant = estImportant;
+  void updateEstImportant(bool estImportant) => updateQuelqueChose(() => this.estImportant = estImportant);
 }

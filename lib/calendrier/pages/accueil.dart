@@ -14,6 +14,10 @@ class CalendrierHome extends StatefulWidget {
 }
 
 class _CalendrierHomeState extends State<CalendrierHome> {
+  @override
+  Widget build(BuildContext context) => _buildScaffold();
+
+  // Back-end
   final DateTime _today = DateTime.now();
   DateTime _jourSelectionne = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -43,19 +47,21 @@ class _CalendrierHomeState extends State<CalendrierHome> {
     _getEventsData().initialiserEvents();
   }
 
-  @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: const Text('Calendrier'),
-      ),
-      body: Column(
-        children: [
-          _buildCalendrier(),
-          _buildListeEvents(),
-          _buildBoutonsActions(),
-        ],
-      )
-  );
+  // ----------------------------
+  // UI
+
+  Scaffold _buildScaffold() => Scaffold(
+    appBar: AppBar(
+      title: const Text('Calendrier'),
+    ),
+    body: Column(
+      children: [
+        _buildCalendrier(),
+        _buildListeEvents(),
+        _buildBoutonsActions(),
+      ],
+    )
+);
 
   TableCalendar _buildCalendrier() => TableCalendar(
       locale: 'fr_FR',

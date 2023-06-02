@@ -5,7 +5,7 @@ import 'package:intl/date_symbol_data_local.dart';
 //import 'package:notepadd/global/font_global.dart';
 import 'package:notepadd/global/models/menu.dart';
 import 'package:notepadd/notes/main.dart';
-import 'package:notepadd/todo/main.dart';
+import 'package:notepadd/taches/main.dart';
 import 'package:notepadd/calendrier/main.dart';
 
 import 'package:notepadd/global/theme.dart';
@@ -45,7 +45,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final _menus = [
     Menu('Notes', const NotesApp(), Colors.lightGreen),
-    Menu('Tâches', const ToDoApp(), Colors.redAccent),
+    Menu('Tâches', const TachesApp(), Colors.redAccent),
     Menu('Calendrier', const CalendrierApp(), Colors.brown)
   ];
 

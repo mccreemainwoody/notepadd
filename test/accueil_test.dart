@@ -5,14 +5,14 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
+//import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:notepadd/main.dart';
 
 void main() {
   testWidgets('Le build de l\'acceuil réussit', (WidgetTester tester) async{
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const NotepaddMainApp());
     expect(find.text('Notepad+++'), findsOneWidget);
     expect(find.text('Notes'), findsOneWidget);
     expect(find.text('Tâches'), findsOneWidget);

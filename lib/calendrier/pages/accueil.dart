@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:notepadd/global/methods/recharge_facile.dart';
+import 'package:notepadd/global/methods/appbars.dart';
 
 import 'package:notepadd/calendrier/models/event.dart';
 import 'package:notepadd/calendrier/models/event_data.dart';
@@ -13,70 +15,58 @@ class CalendrierHome extends StatefulWidget {
   State<CalendrierHome> createState() => _CalendrierHomeState();
 }
 
-class _CalendrierHomeState extends State<CalendrierHome> {
+class _CalendrierHomeState extends StateRechargeFacile<CalendrierHome> {
   @override
-  Widget build(BuildContext context) => _buildScaffold();
+  void initStateCustom() => _getEventsData().initialiserEvents();
+
 
   // Back-end
   final DateTime _today = DateTime.now();
   DateTime _jourSelectionne = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
-  EventsData _getEventsData() =>
-      Provider.of<EventsData>(context, listen: false);
+  EventsData _getEventsData() => Provider.of<EventsData>(context, listen: false);
 
-  void _creerNouvelEvent() {
-    Event nouvelEvent = _getEventsData().creerNouveauEvent();
-    _editerEvent(nouvelEvent, true);
-  }
+  void _creerNouvelEvent() => _editerEvent(_getEventsData().creerNouveauEvent(), true);
 
   void _editerEvent(Event event, bool estNouvelEvent) => Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => EditionEventPage(event, estNouvelEvent)
-      )
+      MaterialPageRoute(builder: (context) => EditionEventPage(event, estNouvelEvent))
   );
 
-  void _supprimerEvent(Event event) => _getEventsData().remove(event);
+  void _supprimerEvent(Event event) => fairePuisRecharger(() => _getEventsData().remove(event));
 
-  void _viderEvents() => _getEventsData().clear();
+  void _viderEvents() => fairePuisRecharger(() => _getEventsData().clear());
 
-  @override
-  void initState() {
-    super.initState();
-    _getEventsData().initialiserEvents();
-  }
 
   // ----------------------------
   // UI
 
-  Scaffold _buildScaffold() => Scaffold(
-    appBar: AppBar(
-      title: const Text('Calendrier'),
-    ),
-    body: Column(
-      children: [
-        _buildCalendrier(),
-        _buildListeEvents(),
-        _buildBoutonsActions(),
-      ],
-    )
-);
+  @override
+  Scaffold buildScaffold() => Scaffold(
+      appBar: buildAppBar(context, 'Calendrier'),
+      body: Column(
+        children: [
+          _buildCalendrier(),
+          _buildListeEvents(),
+          _buildMenuGestionActions(),
+        ],
+      ));
 
   TableCalendar _buildCalendrier() => TableCalendar(
-      locale: 'fr_FR',
-      firstDay: DateTime.utc(2010, 10, 16),
-      lastDay: DateTime.utc(2030, 3, 14),
-      focusedDay: _today,
-      startingDayOfWeek: StartingDayOfWeek.monday,
-      calendarFormat: _calendarFormat,
-      onDaySelected: _onDaySelected,
-      onFormatChanged: _onFormatChanged,
-      onPageChanged: _onPageChanged,
-      selectedDayPredicate: (day) => isSameDay(_jourSelectionne, day),
-      availableGestures: AvailableGestures.all,
-      eventLoader: _eventLoader,
-  );
+        locale: 'fr_FR',
+        firstDay: DateTime.utc(2010, 10, 16),
+        lastDay: DateTime.utc(2030, 3, 14),
+        focusedDay: _today,
+        startingDayOfWeek: StartingDayOfWeek.monday,
+        calendarFormat: _calendarFormat,
+        onDaySelected: _onDaySelected,
+        onFormatChanged: _onFormatChanged,
+        onPageChanged: _onPageChanged,
+        selectedDayPredicate: (day) => isSameDay(_jourSelectionne, day),
+        availableGestures: AvailableGestures.all,
+        eventLoader: _eventLoader,
+      );
 
   Expanded _buildListeEvents() {
     List<Event> _eventsPourCeJour = _getEventsForDay(_jourSelectionne);
@@ -84,39 +74,29 @@ class _CalendrierHomeState extends State<CalendrierHome> {
     return Expanded(
       child: ListView.builder(
         itemCount: _eventsPourCeJour.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-              title: Text(_eventsPourCeJour[index].titre),
-              subtitle: Text(
-                  '${_eventsPourCeJour[index].date?.hour}:${_eventsPourCeJour[index].date?.minute}'
-              ),
-              onTap: () => _editerEvent(_eventsPourCeJour[index], false),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () => _supprimerEvent(_eventsPourCeJour[index]),
-              ));
-        },
+        itemBuilder: (context, index) =>
+            _buildTileEvent(_eventsPourCeJour[index]),
       ),
-    );
+    );}
+
+  ListTile _buildTileEvent(Event event) {
+    return ListTile(
+        title: Text(event.titre),
+        subtitle: Text('${event.date?.hour}:${event.date?.minute}'),
+        onTap: () => _editerEvent(event, false),
+        trailing: IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () => _supprimerEvent(event),
+        ));
   }
 
-  Padding _buildBoutonsActions() => Padding(
+  Padding _buildMenuGestionActions() => Padding(
       padding: const EdgeInsets.all(12.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          FloatingActionButton(
-              heroTag: 'ajouter-event',
-              tooltip: 'Supprimer tous les événements',
-              onPressed: _viderEvents,
-              backgroundColor: Colors.red,
-              child: const Icon(Icons.delete)),
-          FloatingActionButton(
-              heroTag: 'vider-events',
-              tooltip: 'Ajouter un événement',
-              onPressed: _creerNouvelEvent,
-              backgroundColor: Colors.green,
-              child: const Icon(Icons.add)),
+          _buildBoutonAjouterEvent(),
+          _buildBoutonViderEvents(),
         ],
       ));
 
@@ -130,5 +110,34 @@ class _CalendrierHomeState extends State<CalendrierHome> {
 
   List<Event> _eventLoader(DateTime day) => _getEventsForDay(day);
 
-  List<Event> _getEventsForDay(DateTime day) => _getEventsData().getEventsParJour(day);
+  List<Event> _getEventsForDay(DateTime day) =>
+      _getEventsData().getEventsParJour(day);
+
+  FloatingActionButton _buildBoutonAjouterEvent() => _buildBoutonAction(
+            heroTag: 'ajouter-event',
+            tooltip: 'Supprimer tous les événements',
+            onPressed: _viderEvents,
+            color: Colors.red,
+            icon: const Icon(Icons.delete));
+
+  FloatingActionButton _buildBoutonViderEvents() => _buildBoutonAction(
+            heroTag: 'vider-events',
+            tooltip: 'Ajouter un événement',
+            onPressed: _creerNouvelEvent,
+            color: Colors.green,
+            icon: const Icon(Icons.add));
+
+  FloatingActionButton _buildBoutonAction(
+      {String? heroTag,
+        String? tooltip,
+        required Function() onPressed,
+        Icon? icon,
+        Color? color}) =>
+      FloatingActionButton(
+            heroTag: heroTag,
+            tooltip: tooltip,
+            backgroundColor: color,
+            onPressed: onPressed,
+            child: icon,
+          );
 }

@@ -9,15 +9,14 @@ class ConstructeurData {
   ConstructeurData(this.titre, {dateCreationParam, this.dateModification})
       : dateCreation = dateCreationParam ?? DateTime.now();
 
-  factory ConstructeurData.fromMap(Map<String, dynamic> map) =>
-      ConstructeurData(map['titre'],
-          dateCreationParam: DateTime.parse(map['dateCreation']),
-          dateModification: map['dateModification'] == null
-              ? null
-              : DateTime.parse(map['dateModification']));
+  factory ConstructeurData.fromMap(Map<String, dynamic> map) => ConstructeurData(
+      map['titre'],
+      dateCreationParam: DateTime.parse(map['dateCreation']),
+      dateModification: map['dateModification'] == null
+          ? null
+          : DateTime.parse(map['dateModification']));
 
-  factory ConstructeurData.fromJson(String json) =>
-      ConstructeurData.fromMap(jsonDecode(json) as Map<String, dynamic>);
+  factory ConstructeurData.fromJson(String json) => ConstructeurData.fromMap(jsonDecode(json) as Map<String, dynamic>);
 
 
   Map<String, dynamic> toMap() => {

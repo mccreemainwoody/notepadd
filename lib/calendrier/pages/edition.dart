@@ -15,6 +15,16 @@ class EditionEventPage extends StatefulWidget {
 }
 
 class _EditionEventPageState extends State<EditionEventPage> {
+  @override
+  Widget build(BuildContext context) => _buildScaffold(context);
+
+  void faireEtQuitter(Function action) {
+    action();
+    Navigator.pop(context);
+  }
+
+  // Back-end
+  final TextEditingController _dateEventControlleur = TextEditingController();
   Event getEvent() => widget.event;
   EventsData getEventsData() => Provider.of<EventsData>(context, listen: false);
 
@@ -22,64 +32,52 @@ class _EditionEventPageState extends State<EditionEventPage> {
 
   void modifierEvent() => getEventsData().update(getEvent());
 
-  void supprimerEvent() => getEventsData().remove(getEvent());
+  void supprimerEvent() => faireEtQuitter(() => getEventsData().remove(getEvent()));
 
-  void sauvegarderEvent() {
-    widget.estNouvelEvent ? ajouterEvent() : modifierEvent();
-    Navigator.pop(context);
-  }
+  void sauvegarderEvent() => faireEtQuitter(() => widget.estNouvelEvent ? ajouterEvent() : modifierEvent());
 
-  @override
-  Widget build(BuildContext context) {
-    TextEditingController dateEventControlleur = TextEditingController();
+  // --------------------------
+  // UI
 
-    return Scaffold(
-        appBar: AppBar(
-            title: Text(widget.estNouvelEvent ? 'Nouvel événement' : 'Modifier l\'événement'),
-            actions: [
-              _buildBoutonSauvegarder(),
-              !widget.estNouvelEvent
-                  ? _buildBoutonSupprimer()
-                  : Container(),
-            ]),
-        body: Column(
-          children: [
-            _buildChampTitre(),
-            _buildChampDateHeure(context, dateEventControlleur)
-          ],
-        ));
-  }
+  Scaffold _buildScaffold(BuildContext context) => Scaffold(
+      appBar: _buildAppBar(),
+      body: Column(
+        children: [
+          Padding(padding: const EdgeInsets.all(8.0), child: _buildChampTitre()),
+          Padding(padding: const EdgeInsets.all(8.0), child: _buildChampDateHeure(context))
+        ],
+      ));
 
-  IconButton _buildBoutonSupprimer() => IconButton(
-      onPressed: supprimerEvent,
-      icon: const Icon(Icons.delete)
-  );
+  AppBar _buildAppBar() => AppBar(
+        title: Text(widget.estNouvelEvent ? 'Nouvel événement' : 'Modifier l\'événement'),
+        actions: [
+          _buildBoutonSauvegarder(),
+          !widget.estNouvelEvent
+              ? _buildBoutonSupprimer()
+              : Container(),
+        ]);
 
   IconButton _buildBoutonSauvegarder() => IconButton(
       onPressed: sauvegarderEvent,
       icon: const Icon(Icons.save)
   );
 
-  Padding _buildChampTitre() => Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextField(
-          decoration: const InputDecoration(
-              labelText: 'Titre', icon: Icon(Icons.title)),
-          controller: TextEditingController(text: getEvent().titre),
-          onChanged: (value) => getEvent().titre = value));
+  IconButton _buildBoutonSupprimer() => IconButton(
+      onPressed: supprimerEvent,
+      icon: const Icon(Icons.delete)
+  );
 
+  TextField _buildChampTitre() => TextField(
+      decoration: const InputDecoration(labelText: 'Titre', icon: Icon(Icons.title)),
+      controller: TextEditingController(text: getEvent().titre),
+      onChanged: (value) => getEvent().titre = value);
 
-  Padding _buildChampDateHeure(
-      BuildContext context, TextEditingController controller) {
+  TextField _buildChampDateHeure(BuildContext context) {
     DateTime dateActuelle = getEvent().date ?? DateTime.now();
-    if (!widget.estNouvelEvent) controller.text = dateActuelle.toString();
-    return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-              labelText: 'Date de l\'événement',
-              icon: Icon(Icons.calendar_month)),
+    if (!widget.estNouvelEvent) _dateEventControlleur.text = dateActuelle.toString();
+    return TextField(
+          controller: _dateEventControlleur,
+          decoration: const InputDecoration(labelText: 'Date de l\'événement', icon: Icon(Icons.calendar_month)),
           onTap: () async {
             DateTime? date = await showDatePicker(
                 context: context,
@@ -90,17 +88,14 @@ class _EditionEventPageState extends State<EditionEventPage> {
 
             if (date == null) return;
 
-            TimeOfDay? heure = await showTimePicker(
-                context: context,
-                initialTime: TimeOfDay.now()
-            );
+            TimeOfDay? heure = await showTimePicker(context: context, initialTime: TimeOfDay.now());
 
             getEvent().date = heure != null
                 ? DateTime(date.year, date.month, date.day, heure.hour, heure.minute)
                 : date;
 
-            controller.text = getEvent().date.toString();
+            _dateEventControlleur.text = getEvent().date.toString();
           },
-        ));
+        );
   }
 }

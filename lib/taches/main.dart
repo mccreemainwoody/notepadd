@@ -15,7 +15,6 @@ class TachesApp extends StatefulWidget {
 class _TachesAppState extends State<TachesApp> {
   @override
   Widget build(BuildContext context) {
-    print("Je cuisine là");
     return ChangeNotifierProvider(
         create: (context) => TachesData(),
         builder: (context, child) {

@@ -14,5 +14,13 @@ class TachesData extends ConstructeurManagerData<Tache, TachesPersistance> {
 
   List<Tache> getTaches() => getElements();
 
-  Tache creerNouvelleTache() => Tache('', priorite: 0);
+  Tache creerNouvelleTache(String? titre) => Tache(titre ?? '');
+
+  List<Tache> rechercherTaches(String texteRecherche) {
+    if (texteRecherche.isEmpty) return liste;
+    return liste
+        .where((tache) =>
+            tache.titre.toLowerCase().contains(texteRecherche.toLowerCase()))
+        .toList();
+  }
 }

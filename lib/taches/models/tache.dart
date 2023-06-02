@@ -4,10 +4,12 @@ import 'package:notepadd/global/models/bases/data.dart';
 class Tache extends ConstructeurData {
   bool estFait = false;
   bool estImportant = false;
-  int priorite;
+  int priorite = 0;
 
   Tache(String titre,
-      {int this.priorite = 0,
+      {this.estFait = false,
+      this.estImportant = false,
+      this.priorite = 0,
       DateTime? dateCreationParam,
       DateTime? dateModification})
       : super(titre,
@@ -16,6 +18,8 @@ class Tache extends ConstructeurData {
 
   factory Tache.fromMap(Map<String, dynamic> map) => Tache(
         map['titre'],
+        estFait: map['estFait'],
+        estImportant: map['estImportant'],
         priorite: map['priorite'],
         dateCreationParam: DateTime.parse(map['dateCreation']),
         dateModification: map['dateModification'] == null
@@ -27,13 +31,15 @@ class Tache extends ConstructeurData {
 
   @override
   String toString() =>
-      'Tache{titre: $titre, priorite: $priorite, dateCreation: $dateCreation, '
-      'dateModification: $dateModification}';
+      'Tache{titre: $titre, estFait: $estFait, estImportant: $estImportant, '
+      'priorite: $priorite, dateCreation: $dateCreation, dateModification: $dateModification}';
 
   @override
-  Map<String, dynamic> toMap() => super.toMap()..addAll({
-      'priorite': priorite,
+  Map<String, dynamic> toMap() => super.toMap()
+    ..addAll({
+      'estFait': estFait,
       'estImportant': estImportant,
+      'priorite': priorite,
     });
 
   void updateTout(String titre, int priorite, bool estImportant, bool estFait) {

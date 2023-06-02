@@ -14,7 +14,7 @@ void main() async {
   await Hive.initFlutter();
 
   await Hive.openBox('notes');
-  await Hive.openBox('todo');
+  await Hive.openBox('taches');
   await Hive.openBox('calendrier');
 
   initializeDateFormatting().then((_) => runApp(const MyApp()));

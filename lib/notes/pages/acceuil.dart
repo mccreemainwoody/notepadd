@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:notepadd/global/methods/recharge_facile.dart';
+import 'package:notepadd/global/methods/appbars.dart';
 
-import '../models/note.dart';
-import '../models/notes_data.dart';
+import 'package:notepadd/notes/models/note.dart';
+import 'package:notepadd/notes/models/notes_data.dart';
 import 'edition.dart';
 
 class NotesHome extends StatefulWidget {
@@ -12,19 +14,32 @@ class NotesHome extends StatefulWidget {
   State<NotesHome> createState() => _NotesHomeState();
 }
 
-class _NotesHomeState extends State<NotesHome> {
+class _NotesHomeState extends StateRechargeFacile<NotesHome> {
   @override
-  Widget build(BuildContext context) {
-    return Consumer(builder: (context, value, child) => _buildScaffold(context));
-  }
+  void initStateCustom() => _rechargerNotes();
 
-  @override
-  void initState() {
-    super.initState();
-    Provider.of<NotesData>(context, listen: false).initialiserNotes();
-  }
 
-  String formaterContenuNote(Note note){
+  // Back-end
+  NotesData _getNotesData() => Provider.of<NotesData>(context, listen: false);
+
+  List<Note> _getNotes() => _getNotesData().getNotes();
+
+  void _chargerNotes() => _getNotesData().initialiserNotes();
+
+  void _rechargerNotes() => fairePuisRecharger(() => _chargerNotes());
+
+  void _creerNouvelleNote(BuildContext context) => _editerNote(_getNotesData().creerNouvelleNote(), true);
+
+  void _editerNote(Note note, bool estNouvelleNote) => Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EditionNotePage(note, estNouvelleNote)
+      ));
+
+  void _supprimerNote(Note note) => fairePuisRecharger(() => _getNotesData().remove(note));
+
+  void _viderNotes() => fairePuisRecharger(() => _getNotesData().clear());
+
+  String _formaterContenuNote(Note note) {
     if (note.contenu == null) return '';
     String contenu = note.contenu!;
     if (RegExp(r'\n').hasMatch(contenu)) contenu = '${contenu.split('\n')[0]}...';
@@ -32,96 +47,85 @@ class _NotesHomeState extends State<NotesHome> {
     return contenu;
   }
 
-  void _creerNouvelleNote(BuildContext context) {
-    Note nouvelleNote =
-    Provider.of<NotesData>(context, listen: false).creerNouvelleNote();
-    _editerNote(nouvelleNote, true);
-  }
+  // ----------------------------
+  // UI
 
-  void _editerNote(Note note, bool estNouvelleNote) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => EditionNotePage(note, estNouvelleNote)
-        )
-    );
-  }
-
-  void _supprimerNote(Note note) {
-    Provider.of<NotesData>(context, listen: false).remove(note);
-  }
-
-  void _viderNotes() {
-    Provider.of<NotesData>(context, listen: false).clear();
-  }
-
-  Scaffold _buildScaffold(BuildContext context) {
-    NotesData notesData = Provider.of<NotesData>(context);
-    List<Note> notes = notesData.getNotes();
-
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Notes'),
+  @override
+  Scaffold buildScaffold() => Scaffold(
+      appBar: buildAppBar(context, 'Notes'),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+            _buildBlocNotes(),
+            _buildMenuGestionActions(context)
+          ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            children: [
-              Expanded(
-                child:
-                notes.isEmpty
-                    ? const Center(
-                  child: Text('Aucune note pour l\'instant !'),
-                )
-                    : ListView.builder(
-                  itemCount: notes.length,
-                  itemBuilder: (context, i) {
-                    return _buildNote(notes[i]);
-                  },
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  FloatingActionButton(
-                      heroTag: 'viderNotes',
-                      onPressed: () {
-                        _viderNotes();
-                      },
-                      tooltip: 'Supprimer toutes les notes',
-                      backgroundColor: Colors.red,
-                      child: const Icon(Icons.delete_forever)
-                  ),
-                  FloatingActionButton(
-                    heroTag: 'creerNouvelleNote',
-                    onPressed: () {
-                      _creerNouvelleNote(context);
-                    },
-                    tooltip: 'Ajouter une note',
-                    child: const Icon(Icons.add),
-                  ),
-                ],
-              )
-            ],
+      ));
+
+  Expanded _buildBlocNotes() => Expanded(
+          child: _getNotes().isEmpty
+              ? const Center(child: Text('Aucune note pour l\'instant !'))
+              : _buildListeNotes(),
+      );
+
+  Padding _buildMenuGestionActions(BuildContext context) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildBoutonViderNotes(),
+          _buildBoutonCreerNouvelleNote(context),
+        ],
+      ));
+
+  ListView _buildListeNotes() => ListView.builder(
+        itemCount: _getNotes().length,
+        itemBuilder: (context, i) => _buildNote(_getNotes()[i]),
+      );
+
+  Card _buildNote(Note note) => Card(
+        child: ListTile(
+          title: Text(note.titre),
+          subtitle: Text(_formaterContenuNote(note)),
+          onTap: () => _editerNote(note, false),
+          trailing: IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () => _supprimerNote(note),
           ),
-        ));
-  }
-
-  Card _buildNote(Note note) {
-    return Card(
-      child: ListTile(
-        title: Text(note.titre),
-        subtitle: Text(formaterContenuNote(note)),
-        onTap: () {
-          _editerNote(note, false);
-        },
-        trailing: IconButton(
-          icon: const Icon(Icons.delete),
-          onPressed: () {
-            _supprimerNote(note);
-          },
         ),
-      ),
-    );
-  }
+      );
+
+  FloatingActionButton _buildBoutonCreerNouvelleNote(BuildContext context) =>
+      buildBoutonAction(
+        heroTag: 'creerNouvelleNote',
+        onPressed: () {
+          _creerNouvelleNote(context);
+        },
+        tooltip: 'Ajouter une note',
+        icon: const Icon(Icons.add),
+      );
+
+  FloatingActionButton _buildBoutonViderNotes() => buildBoutonAction(
+      heroTag: 'viderNotes',
+      onPressed: () {
+        _viderNotes();
+      },
+      tooltip: 'Supprimer toutes les notes',
+      color: Colors.red,
+      icon: const Icon(Icons.delete_forever));
+
+  FloatingActionButton buildBoutonAction(
+          {String? heroTag,
+          String? tooltip,
+          required Function() onPressed,
+          Icon? icon,
+          Color? color}) =>
+      FloatingActionButton(
+            heroTag: heroTag,
+            tooltip: tooltip,
+            backgroundColor: color,
+            onPressed: onPressed,
+            child: icon,
+          );
 }

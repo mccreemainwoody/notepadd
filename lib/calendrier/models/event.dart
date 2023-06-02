@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+
 import 'package:notepadd/global/models/bases/data.dart';
 
 class Event extends ConstructeurData {
@@ -14,24 +16,26 @@ class Event extends ConstructeurData {
             dateCreationParam: dateCreationParam,
             dateModification: dateModification);
 
-  factory Event.fromJson(Map<String, dynamic> json) => Event(json['titre'],
-      date: DateTime.parse(json['date']),
-      couleur: json['couleur'] == null ? null : Color(json['couleur']),
-      dateCreationParam: DateTime.parse(json['dateCreation']),
-      dateModification: json['dateModification'] == null
+  factory Event.fromMap(Map<String, dynamic> Map) => Event(
+      Map['titre'],
+      date: DateTime.parse(Map['date']),
+      couleur: Map['couleur'] == null ? null : Color(Map['couleur']),
+      dateCreationParam: DateTime.parse(Map['dateCreation']),
+      dateModification: Map['dateModification'] == null
           ? null
-          : DateTime.parse(json['dateModification']));
+          : DateTime.parse(Map['dateModification']));
 
-  @override
-  Map<String, dynamic> toJson() => super.toJson()
-    ..addAll({
-      'couleur': couleur == null ? null : couleur!.value,
-      'date': date == null ? null : date!.toIso8601String()
-    });
+  factory Event.fromJson(String json) => Event.fromMap(jsonDecode(json));
 
   @override
   String toString() => 'Event(nom = $titre, couleur = $couleur, date = $date, '
       'dateCreation = $dateCreation, dateModification = $dateModification';
+
+  @override
+  Map<String, dynamic> toMap() => super.toMap()..addAll({
+      'couleur': couleur == null ? null : couleur!.value,
+      'date': date == null ? null : date!.toIso8601String()
+    });
 
   void updateTout(String titre, {Color? couleur, DateTime? date}) {
     updateBase(titre);
@@ -39,7 +43,7 @@ class Event extends ConstructeurData {
     if (date != null) updateDate(date);
   }
 
-  void updateCouleur(Color couleur) => this.couleur = couleur;
+  void updateCouleur(Color couleur) => updateQuelqueChose(() => this.couleur = couleur);
 
-  void updateDate(DateTime date) => this.date = date;
+  void updateDate(DateTime date) => updateQuelqueChose(() => this.date = date);
 }

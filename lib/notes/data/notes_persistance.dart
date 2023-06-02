@@ -1,24 +1,21 @@
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:notepadd/global/models/bases/persistance.dart';
+
 import '../models/note.dart';
 
-class PersistanceNotes extends ConstructeurPersistance<Note>{
+class NotesPersistance extends ConstructeurPersistance<Note>{
   @override
-  final box = Hive.box('notes');
-
-  List<Note> _purgerNotesCorrompuesEtRetournerNotesValides()
-    => purgerElementsCorrompusEtRetournerElementsValides();
+  final nomBox = 'notes';
 
   @override
   Note construireObjetPourTransfertDepuisBdDVersLocal(json) => Note.fromJson(json);
 
-  List<Note> chargerNotes() => _purgerNotesCorrompuesEtRetournerNotesValides();
+  List<Note> chargerNotes() => chargerElements();
 
-  void ajouterNotes(Note note) => ajouterElement(note);
+  void ajouterNote(Note note) => ajouterElement(note);
 
-  void modifierNotes(int index, Note note) => modifierElement(index, note);
+  void modifierNote(int index, Note note) => modifierElement(index, note);
 
-  void supprimerNotes(int index) => supprimerNotes(index);
+  void supprimerNote(int index) => supprimerNote(index);
 
   void viderNotes() => viderElements();
 }

@@ -1,21 +1,15 @@
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:notepadd/global/models/bases/persistance.dart';
 
 import '../models/event.dart';
 
 class CalendrierPersistance extends ConstructeurPersistance<Event> {
   @override
-  final box = Hive.box('calendrier');
-
-  List<Event> _purgerEventsCorrompusEtRetournerEventsValides() =>
-      purgerElementsCorrompusEtRetournerElementsValides();
+  final nomBox = 'calendrier';
 
   @override
-  Event construireObjetPourTransfertDepuisBdDVersLocal(json) =>
-      Event.fromJson(json);
+  Event construireObjetPourTransfertDepuisBdDVersLocal(json) => Event.fromJson(json);
 
-  List<Event> chargerEvents() =>
-      _purgerEventsCorrompusEtRetournerEventsValides();
+  List<Event> chargerEvents() => chargerElements();
 
   void ajouterEvent(Event event) => ajouterElement(event);
 

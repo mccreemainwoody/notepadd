@@ -16,13 +16,25 @@ class EditionNotePage extends StatefulWidget {
 }
 
 class _EditionNotePageState extends State<EditionNotePage> {
-  QuillController _controller = QuillController.basic();
+  @override
+  Widget build(BuildContext context) => _buildScaffold(context);
 
   @override
   void initState() {
     super.initState();
     chargerNote();
   }
+
+  QuillController _controller = QuillController.basic();
+
+  void faireEtQuitter(Function action) {
+    action();
+    Navigator.pop(context);
+  }
+
+  // Back-end
+  NotesData _getNotesData() => Provider.of<NotesData>(context, listen: false);
+
 
   void chargerNote() {
     final document = Document()..insert(0, widget.note.contenu);
@@ -34,83 +46,68 @@ class _EditionNotePageState extends State<EditionNotePage> {
     });
   }
 
-  void ajouterNote() {
-    Provider.of<NotesData>(context, listen: false).add(widget.note);
-  }
+  void ajouterNote() => _getNotesData().add(widget.note);
 
-  void modifierNote() {
-    Provider.of<NotesData>(context, listen: false).update(widget.note);
-  }
+  void modifierNote() => _getNotesData().update(widget.note);
 
-  void sauvegarderNote() {
+  void sauvegarderNote() => faireEtQuitter(() {
     widget.note.contenu = _controller.document.toPlainText().trimRight();
     widget.estNouvelleNote ? ajouterNote() : modifierNote();
-  }
+  });
 
-  void supprimerNote() {
-    Provider.of<NotesData>(context, listen: false).remove(widget.note);
-  }
+  void supprimerNote() => faireEtQuitter(() => _getNotesData().remove(widget.note));
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-            //title: Text(widget.estNouvelleNote ? 'Nouvelle note' : 'Modifier la note'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  supprimerNote();
-                  Navigator.pop(context);
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.save),
-                onPressed: () {
-                  sauvegarderNote();
-                  Navigator.pop(context);
-                },
-              ),
-            ]),
-        body: Column(
+  // ------------------------------
+  // UI
+
+  Scaffold _buildScaffold(BuildContext context) => Scaffold(
+      appBar: _buildAppBar(context),
+      body: Column(
+        children: [
+          _buildFormTitreNote(),
+          _buildQuillToolbar(),
+          Expanded(child: _buildFormContenuNote())
+        ]));
+
+  AppBar _buildAppBar(BuildContext context) => AppBar(
+        //title: Text(widget.estNouvelleNote ? 'Nouvelle note' : 'Modifier la note'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () => supprimerNote()),
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () => sauvegarderNote()),
+        ]);
+
+  Row _buildFormTitreNote() => Row(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    child: TextField(
-                      controller: TextEditingController()
-                        ..text = widget.note.titre,
-                      decoration: const InputDecoration(
-                        hintText: 'Titre de la note',
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (value) {
-                        widget.note.titre = value;
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            QuillToolbar.basic(
-              controller: _controller,
-              toolbarIconSize: 20,
-              showBackgroundColorButton: false,
-              showClearFormat: false,
-              showHeaderStyle: false,
-              showSubscript: false,
-              showSuperscript: false,
-              showFontFamily: false,
-            ),
             Expanded(
-                child: Container(
-              padding: const EdgeInsets.all(8),
-              child:
-                  QuillEditor.basic(controller: _controller, readOnly: false),
-            ))
-          ],
-        ));
-  }
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: TextField(
+                  controller: TextEditingController()..text = widget.note.titre,
+                  decoration: const InputDecoration(
+                    hintText: 'Titre de la note',
+                    border: InputBorder.none,
+                  ),
+                  onChanged: (value) => widget.note.titre = value
+                )))
+          ]);
+
+  QuillToolbar _buildQuillToolbar() => QuillToolbar.basic(
+          controller: _controller,
+          toolbarIconSize: 20,
+          showBackgroundColorButton: false,
+          showClearFormat: false,
+          showHeaderStyle: false,
+          showSubscript: false,
+          showSuperscript: false,
+          showFontFamily: false,
+        );
+
+  Container _buildFormContenuNote() => Container(
+          padding: const EdgeInsets.all(8),
+          child: QuillEditor.basic(controller: _controller, readOnly: false)
+        );
 }

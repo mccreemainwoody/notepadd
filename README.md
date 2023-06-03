@@ -2,15 +2,14 @@
 
 Une application de notes in-croy-able
 
-## Getting Started
+## Présentation
 
-This project is a starting point for a Flutter application.
+Notepad+++ (surnommée notepadd dans le dépôt Github) est un outil polyvalent qui vous permet de rester organisé(e)
+et de gérer facilement vos informations importantes.
+Son interface est soutenu par trois sous-applications :
 
-A few resources to get you started if this is your first Flutter project:
+- Notes : Un bloc-notes créeant, modifiant et supprimant des notes textuelles. 
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Tâches : Une liste de tâches permettant de créer des tâches courtes. Permet également de les marquer comme importantes ou complétées.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Calendrier : Un calendrier. Crée, modifie et supprime des événements datés par date et heure.

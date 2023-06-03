@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Menu{
   String title;
   Color color;
-  StatefulWidget lien;
+  Widget lien;
 
   Map icons = const {
     'Notes': Icons.notes,
@@ -12,6 +12,9 @@ class Menu{
   };
 
   Menu(this.title, this.lien, this.color);
+
+  @override
+  String toString() => 'Menu{titre: $title, couleur : $color, lien : $lien}';
 
   IconData getIcon() => icons[title];
 }

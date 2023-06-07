@@ -16,7 +16,9 @@ class NotesHome extends StatefulWidget {
 
 class _NotesHomeState extends StateRechargeFacile<NotesHome> {
   @override
-  void initStateCustom() => _rechargerNotes();
+  void initStateCustom() => _chargerNotes();
+
+  void fairePuisRechargerNotes(void Function() action) => fairePuisRecharger(action, methodeRechargeElement: () => _chargerNotes());
 
 
   // Back-end
@@ -26,8 +28,6 @@ class _NotesHomeState extends StateRechargeFacile<NotesHome> {
 
   void _chargerNotes() => _getNotesData().initialiserNotes();
 
-  void _rechargerNotes() => fairePuisRecharger(() => _chargerNotes());
-
   void _creerNouvelleNote(BuildContext context) => _editerNote(_getNotesData().creerNouvelleNote(), true);
 
   void _editerNote(Note note, bool estNouvelleNote) => Navigator.push(
@@ -35,9 +35,9 @@ class _NotesHomeState extends StateRechargeFacile<NotesHome> {
       MaterialPageRoute(builder: (context) => EditionNotePage(note, estNouvelleNote)
       ));
 
-  void _supprimerNote(Note note) => fairePuisRecharger(() => _getNotesData().remove(note));
+  void _supprimerNote(Note note) => fairePuisRechargerNotes(() => _getNotesData().remove(note));
 
-  void _viderNotes() => fairePuisRecharger(() => _getNotesData().clear());
+  void _viderNotes() => fairePuisRechargerNotes(() => _getNotesData().clear());
 
   String _formaterContenuNote(Note note) {
     if (note.contenu == null) return '';
@@ -57,31 +57,31 @@ class _NotesHomeState extends StateRechargeFacile<NotesHome> {
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            _buildBlocNotes(),
-            _buildMenuGestionActions(context)
+            _buildBlocNotes(_getNotes()),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: _buildMenuGestionActions(context),
+            )
           ],
         ),
       ));
 
-  Expanded _buildBlocNotes() => Expanded(
-          child: _getNotes().isEmpty
+  Expanded _buildBlocNotes(List<Note> notes) => Expanded(
+          child: notes.isEmpty
               ? const Center(child: Text('Aucune note pour l\'instant !'))
-              : _buildListeNotes(),
+              : _buildListeNotes(notes),
       );
 
-  Padding _buildMenuGestionActions(BuildContext context) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildBoutonViderNotes(),
-          _buildBoutonCreerNouvelleNote(context),
-        ],
-      ));
+  Row _buildMenuGestionActions(BuildContext context) => Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildBoutonViderNotes(),
+        _buildBoutonCreerNouvelleNote(context),
+      ]);
 
-  ListView _buildListeNotes() => ListView.builder(
-        itemCount: _getNotes().length,
-        itemBuilder: (context, i) => _buildNote(_getNotes()[i]),
+  ListView _buildListeNotes(List<Note> notes) => ListView.builder(
+        itemCount: notes.length,
+        itemBuilder: (context, i) => _buildNote(notes[i]),
       );
 
   Card _buildNote(Note note) => Card(
@@ -114,18 +114,4 @@ class _NotesHomeState extends StateRechargeFacile<NotesHome> {
       tooltip: 'Supprimer toutes les notes',
       color: Colors.red,
       icon: const Icon(Icons.delete_forever));
-
-  FloatingActionButton buildBoutonAction(
-          {String? heroTag,
-          String? tooltip,
-          required Function() onPressed,
-          Icon? icon,
-          Color? color}) =>
-      FloatingActionButton(
-            heroTag: heroTag,
-            tooltip: tooltip,
-            backgroundColor: color,
-            onPressed: onPressed,
-            child: icon,
-          );
 }

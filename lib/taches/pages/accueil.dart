@@ -38,15 +38,12 @@ class _TachesHomeState extends StateRechargeFacile<TachesHome> {
   void _initialiserTaches() {
     _getTachesData().initialiserTaches();
     _chargerTaches();
-    _controllerNouvelleTache.addListener(() {
-      _titreNouvelleTache = _controllerNouvelleTache.text;
-    });
+    _controllerNouvelleTache.addListener(() =>_titreNouvelleTache = _controllerNouvelleTache.text);
   }
 
   void _chargerTaches() => _tachesAAfficher = _getTaches();
 
-  Tache _creerNouvelleTache(String? titre) =>
-      _getTachesData().creerNouvelleTache(titre);
+  Tache _creerNouvelleTache(String? titre) => _getTachesData().creerNouvelleTache(titre);
 
   void _supprimerTache(Tache tache) => fairePuisRechargerTaches(() => _getTachesData().remove(tache));
 
@@ -70,8 +67,7 @@ class _TachesHomeState extends StateRechargeFacile<TachesHome> {
         _controllerRechercheTaches.clear();
       });
 
-  void _rechercherTaches(String titre) => fairePuisRecharger(
-      () => _tachesAAfficher = _getTachesData().rechercherTaches(titre));
+  void _rechercherTaches(String titre) => fairePuisRecharger(() => _tachesAAfficher = _getTachesData().rechercherTaches(titre));
 
   // ----------------------------
   // UI
@@ -94,9 +90,8 @@ class _TachesHomeState extends StateRechargeFacile<TachesHome> {
               return Dismissible(
                 key: Key(tache.priorite.toString()),
                 onDismissed: (direction) => _supprimerTache(tache),
-                child: _buildCarteTache(tache),
-          );
-        });
+                child: _buildCarteTache(tache));
+            });
 
   Row _buildMenuRechercheTaches() => Row(
         children: [
@@ -160,9 +155,8 @@ class _TachesHomeState extends StateRechargeFacile<TachesHome> {
         decoration: const InputDecoration(
           hintText: 'Rechercher une tâche',
           prefixIcon: Icon(Icons.search),
-          prefixIconConstraints: BoxConstraints(
-            minWidth: 50,
-          )),
+          prefixIconConstraints: BoxConstraints(minWidth: 50)
+        ),
         controller: _controllerRechercheTaches,
         textInputAction: TextInputAction.done,
         onChanged: (value) => _rechercherTaches(value),
@@ -174,9 +168,8 @@ class _TachesHomeState extends StateRechargeFacile<TachesHome> {
           decoration: const InputDecoration(
             hintText: 'Créer une tâche',
             prefixIcon: Icon(Icons.add),
-            prefixIconConstraints: BoxConstraints(
-              minWidth: 25,
-            )),
+            prefixIconConstraints: BoxConstraints(minWidth: 25)
+          ),
           controller: _controllerNouvelleTache,
           textInputAction: TextInputAction.done,
           onSubmitted: (value) => _sauvegarderTache(),

@@ -98,7 +98,7 @@ void main() {
       contenu: 'contenu',
       estImportant: false,
     );
-    note.updateEstImportant(true);
+    note.updateEstImportant();
     expect(note.titre, 'titre');
     expect(note.contenu, 'contenu');
     expect(note.estImportant, true);
@@ -112,7 +112,7 @@ void main() {
       contenu: 'contenu',
       estImportant: false,
     );
-    note.updateTout('titre2', 'contenu2', true);
+    note.updateTout('titre2', 'contenu2');
     expect(note.titre, 'titre2');
     expect(note.contenu, 'contenu2');
     expect(note.estImportant, true);
@@ -126,7 +126,7 @@ void main() {
       contenu: 'contenu',
       estImportant: false,
     );
-    note.updateTout('titre2', 'contenu2', true);
+    note.updateTout('titre2', 'contenu2');
     expect(note.titre, 'titre2');
     expect(note.contenu, 'contenu2');
     expect(note.estImportant, true);

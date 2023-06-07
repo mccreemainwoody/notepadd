@@ -39,13 +39,12 @@ class Note extends ConstructeurData {
     'estImportant': estImportant ? 1 : 0
   });
 
-  void updateTout(String titre, String? contenu, bool estImportant) {
+  void updateTout(String titre, String? contenu) {
     updateBase(titre);
     updateContenu(contenu);
-    updateEstImportant(estImportant);
   }
 
   void updateContenu(String? contenu) => updateQuelqueChose(() => this.contenu = contenu);
 
-  void updateEstImportant(bool estImportant) => updateQuelqueChose(() => this.estImportant = estImportant);
+  void updateEstImportant() => updateQuelqueChose(() => this.estImportant ^= true);
 }

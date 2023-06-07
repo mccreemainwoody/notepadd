@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:notepadd/global/theme.dart';
+import 'package:notepadd/global/theme/theme.dart';
 import 'package:notepadd/notes/models/notes_data.dart';
 
 import 'pages/acceuil.dart';
